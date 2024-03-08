@@ -1,9 +1,10 @@
 from django.db import models
+from django.utils.text import slugify
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=100, verbose_name='cat_name')
-    slug = models.SlugField(max_length=100, verbose_name='cat_slug')
+    name = models.CharField(max_length=100, verbose_name='cat_name', unique=True)
+    slug = models.SlugField(max_length=100, verbose_name='cat_slug', unique=True)
     image = models.ImageField(upload_to='product_shop/', verbose_name='cat_image')
 
     class Meta:
@@ -15,8 +16,8 @@ class Category(models.Model):
 
 
 class Subcategory(models.Model):
-    name = models.CharField(max_length=100, verbose_name='sub_name')
-    slug = models.SlugField(max_length=100, verbose_name='sub_slug')
+    name = models.CharField(max_length=100, verbose_name='sub_name', unique=True)
+    slug = models.SlugField(max_length=100, verbose_name='sub_slug', unique=True)
     image = models.ImageField(upload_to='product_shop/', verbose_name='sub_image')
     category = models.ForeignKey("Category", on_delete=models.CASCADE, related_name='subcategories',
                                  verbose_name='subcategories')
@@ -30,8 +31,8 @@ class Subcategory(models.Model):
 
 
 class Product(models.Model):
-    name = models.CharField(max_length=100, verbose_name='prod_name')
-    slug = models.SlugField(max_length=100, verbose_name='prod_slug')
+    name = models.CharField(max_length=100, verbose_name='prod_name', unique=True)
+    slug = models.SlugField(max_length=100, verbose_name='prod_slug', unique=True)
     price = models.IntegerField(default=0, verbose_name='prod_price')
     image_small = models.ImageField(upload_to='product_shop/', verbose_name='small_image')
     image_mid = models.ImageField(upload_to='product_shop/', verbose_name='mid_image')
@@ -40,6 +41,11 @@ class Product(models.Model):
                                  verbose_name='prod_categories')
     subcategory = models.ForeignKey("Subcategory", on_delete=models.CASCADE, related_name='subcategories',
                                     verbose_name='prod_categories')
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super(Product, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Product'
