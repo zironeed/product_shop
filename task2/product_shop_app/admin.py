@@ -1,3 +1,22 @@
 from django.contrib import admin
+from models import Category, Subcategory, Product
 
-# Register your models here.
+
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    list_filter = ('name',)
+
+
+@admin.register(Subcategory)
+class SubcategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'category',)
+    list_filter = ('name', 'category',)
+    search_fields = ('name', 'category',)
+
+
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug', 'category', 'subcategory',)
+    list_filter = ('name', 'slug', 'category', 'subcategory',)
+    search_fields = ('name', 'slug', 'category', 'subcategory',)
