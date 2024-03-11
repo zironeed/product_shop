@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from models import Category, Subcategory, Product
+from .models import Category, Subcategory, Product, Cart, CartItem
 
 
 class SubcategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Subcategory
-        fields = "__all__"
+        exclude = ('slug', )
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -14,10 +14,26 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = '__all__'
+        exclude = ('slug', )
 
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
+        exclude = ('slug', )
+
+
+class CartItemSerializer(serializers.ModelSerializer):
+    product = ProductSerializer()
+
+    class Meta:
+        model = CartItem
+        fields = '__all__'
+
+
+class CartSerializer(serializers.ModelSerializer):
+    products = CartItemSerializer(many=True)
+
+    class Meta:
+        model = Cart
         fields = '__all__'
