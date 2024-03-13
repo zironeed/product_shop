@@ -83,6 +83,7 @@ class CartAPIView(APIView):
 
 class CartItemDeleteAPIView(APIView):
     serializer_class = CartItemSerializer
+    permission_classes = [IsAuthenticated]
 
     def delete(self, request):
         cart = request.user.cart
