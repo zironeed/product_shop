@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, Subcategory, Product, Cart, CartItem
+from .models import Category, Subcategory, Product, CartItem
 
 
 class SubcategorySerializer(serializers.ModelSerializer):
@@ -24,16 +24,12 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class CartItemSerializer(serializers.ModelSerializer):
-    product = ProductSerializer()
-
     class Meta:
         model = CartItem
-        fields = '__all__'
+        fields = ('product', 'quantity', )
 
+    def to_representation(self, instance):
+        data = ProductSerializer(instance.product).data
+        data['quantity'] = instance.quantity
 
-class CartSerializer(serializers.ModelSerializer):
-    products = CartItemSerializer(many=True)
-
-    class Meta:
-        model = Cart
-        fields = '__all__'
+        return data
